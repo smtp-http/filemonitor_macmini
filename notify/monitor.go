@@ -2,8 +2,8 @@ package notify;
  
 import (
     "github.com/fsnotify/fsnotify"
-    "github.com/smtp-http/filenotify_go/conn"
-    "github.com/smtp-http/filenotify_go/config"
+    "github.com/smtp-http/filemonitor_macmini/conn"
+    "github.com/smtp-http/filemonitor_macmini/config"
     "log"
     "fmt"
     "path/filepath"
