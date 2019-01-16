@@ -1,7 +1,7 @@
 package notify
 import (
 	"testing"
-	"github.com/smtp-http/filenotify_go/conn"
+	"github.com/smtp-http/filemonitor_macmini/conn"
 )
 
 
