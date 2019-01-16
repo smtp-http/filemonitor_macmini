@@ -1,20 +1,9 @@
-# filemonitor_macmini
-File monitor running on macmini
-
-## Usage
-
-```
-go get -u github.com/smtp-http/filemonitor_macmini
-```
-
-
-```go
 package main
 
 import (
-	"github.com/smtp-http/filemonitor_macmini/notify"
-	"github.com/smtp-http/filemonitor_macmini/conn"
-	"github.com/smtp-http/filemonitor_macmini/config"
+	"github.com/smtp-http/filenotify_go/notify"
+	"github.com/smtp-http/filenotify_go/conn"
+	"github.com/smtp-http/filenotify_go/config"
 )
 
 
@@ -31,4 +20,3 @@ func main() {
 	monitor.SetTcpserver(tcpserver)
 	monitor.Monitor()
 }
-```
