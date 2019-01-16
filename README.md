@@ -32,3 +32,8 @@ func main() {
 	monitor.Monitor()
 }
 ```
+
+
+#### 需要处理的目录结构：
+
+![image](https://github.com/smtp-http/filemonitor_macmini/blob/master/images/path.png)
