@@ -67,7 +67,7 @@ func (f *FileMonitor)Monitor() {
                         fmt.Println(filepath.Base(ev.Name)) //获取路径中的文件名test.txt 
                         
 
-                        if path.Ext(ev.Name) == config.GetConfig().Path.FileExtension {
+                        if path.Ext(ev.Name) == config.GetConfig().FileExtension {
                             fmt.Println(path.Ext(ev.Name)) //获取路径中的文件的后缀 .txt
                             b, err := ioutil.ReadFile(ev.Name) 
                             if err != nil { 
