@@ -4,5 +4,6 @@
     "port":"6688",
     "http_enable":true,
     "url":"http://127.0.0.1:9001/",
-    "path":"D:\\tmp"
+    "path":"D:\\tmp",
+    "file_extension":".csv"
 }

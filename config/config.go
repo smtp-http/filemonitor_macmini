@@ -14,6 +14,7 @@ type Configuration struct {
     HttpEnable bool `json:"http_enable"`
     Url    string `json:"url"`
     Path string `json:"path"`
+    FileExtension string `json:"file_extension"`
 }
 
 type ConfigLoader struct {
