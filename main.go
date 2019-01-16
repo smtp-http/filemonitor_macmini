@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/smtp-http/filenotify_go/notify"
-	"github.com/smtp-http/filenotify_go/conn"
-	"github.com/smtp-http/filenotify_go/config"
+	"github.com/smtp-http/filemonitor_macmini/notify"
+	"github.com/smtp-http/filemonitor_macmini/conn"
+	"github.com/smtp-http/filemonitor_macmini/config"
 )
 
 
