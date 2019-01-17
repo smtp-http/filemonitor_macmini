@@ -14,7 +14,9 @@ import (
 )
 
 type FileMonitor struct {
-    m_tcpserver *conn.TcpServer
+    IsRunning    bool
+    m_tcpserver  *conn.TcpServer
+    MonitorPath  string
 }
 
 var instance *FileMonitor
@@ -23,7 +25,8 @@ var once sync.Once
 func GetFileMonitorInstance() *FileMonitor {
     once.Do(func() {
         instance = &FileMonitor{}
-
+        instance.IsRunning = false
+        instance.MonitorPath = ""
     })
     return instance
 }
@@ -51,6 +54,10 @@ func (f *FileMonitor) StartMonitor(cancel chan string,path_monitor string) {
 
     for {
         if stop {
+            dm := DispMsg{}
+            dm.MonitorName = "file"
+            dm.Action = "stop_ok"
+            DispMsgCh <- dm
             break
         }
         select {
@@ -128,11 +135,10 @@ func (f *FileMonitor) StartMonitor(cancel chan string,path_monitor string) {
 
 type DirectoryMonitor struct {
     MonitorName string
+    IsRunning bool
+    MonitorPath  string
 }
 
-func (d *DirectoryMonitor) StopCurrentMonit(cancel chan string) {
-
-}
 
 var md_instance *DirectoryMonitor
 var md_once sync.Once
@@ -141,6 +147,8 @@ func GetMiddleDirectoryMonitorInstance() *DirectoryMonitor {
     md_once.Do(func() {
         md_instance = &DirectoryMonitor{}
         md_instance.MonitorName = "middle"
+        md_instance.IsRunning = false
+        md_instance.MonitorPath = ""
     })
     return md_instance
 }
@@ -152,6 +160,7 @@ func GetRootDirectoryMonitorInstance() *DirectoryMonitor {
     root_once.Do(func() {
         root_instance = &DirectoryMonitor{}
         root_instance.MonitorName = "root"
+        //root_instance.IsRunning = false
     })
     return root_instance
 }
@@ -175,6 +184,13 @@ func (d *DirectoryMonitor) StartMonitor(cancel chan string,path_monitor string) 
 
     for {
         if stop {
+            if d.MonitorName == "middle" {
+                dm := DispMsg{}
+                dm.MonitorName = d.MonitorName
+                dm.Action = "stop_ok"
+                DispMsgCh <- dm
+            }
+            
             break
         }
         select {
@@ -190,6 +206,7 @@ func (d *DirectoryMonitor) StartMonitor(cancel chan string,path_monitor string) 
                             fmt.Println(ev.Name + " is dir.")
                             dm := DispMsg{}
                             dm.MonitorName = d.MonitorName
+                            dm.Action = "create_dir"
                             dm.NextPath = ev.Name
                             DispMsgCh <- dm
                         } 
@@ -210,3 +227,4 @@ func (d *DirectoryMonitor) StartMonitor(cancel chan string,path_monitor string) 
         }
     }
 }
+
