@@ -15,6 +15,8 @@ type Configuration struct {
     Url    string `json:"url"`
     Path string `json:"path"`
     FileExtension string `json:"file_extension"`
+    DestinationFolder string `json:"destination_folder"`
+    RootDirectory string `json:"root_directory"`
 }
 
 type ConfigLoader struct {

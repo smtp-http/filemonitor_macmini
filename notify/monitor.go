@@ -10,6 +10,7 @@ import (
     "path"
     "io/ioutil"
     "sync"
+    "os"
 )
 
 type FileMonitor struct {
@@ -22,15 +23,16 @@ var once sync.Once
 func GetFileMonitorInstance() *FileMonitor {
     once.Do(func() {
         instance = &FileMonitor{}
+
     })
     return instance
 }
 
-func (f *FileMonitor)SetTcpserver(server *conn.TcpServer) {
+func (f *FileMonitor) SetTcpserver(server *conn.TcpServer) {
     f.m_tcpserver = server
 }
  
-func (f *FileMonitor)Monitor(cancel chan string,path_monitor string) {
+func (f *FileMonitor) StartMonitor(cancel chan string,path_monitor string) {
 
     var stop bool = false
 
@@ -45,7 +47,7 @@ func (f *FileMonitor)Monitor(cancel chan string,path_monitor string) {
     if err != nil {
         log.Fatal(err);
     }
-    //我们另启一个goroutine来处理监控对象的事件
+    //处理监控对象的事件
 
     for {
         if stop {
@@ -119,4 +121,92 @@ func (f *FileMonitor)Monitor(cancel chan string,path_monitor string) {
     }
 
     fmt.Println("good bye!")
+}
+
+
+////////////////////////////////////////////// directory monitor ///////////////////////////////////////////////
+
+type DirectoryMonitor struct {
+    MonitorName string
+}
+
+func (d *DirectoryMonitor) StopCurrentMonit(cancel chan string) {
+
+}
+
+var md_instance *DirectoryMonitor
+var md_once sync.Once
+
+func GetMiddleDirectoryMonitorInstance() *DirectoryMonitor {
+    md_once.Do(func() {
+        md_instance = &DirectoryMonitor{}
+        md_instance.MonitorName = "middle"
+    })
+    return md_instance
+}
+
+var root_instance *DirectoryMonitor
+var root_once sync.Once
+
+func GetRootDirectoryMonitorInstance() *DirectoryMonitor {
+    root_once.Do(func() {
+        root_instance = &DirectoryMonitor{}
+        root_instance.MonitorName = "root"
+    })
+    return root_instance
+}
+
+func (d *DirectoryMonitor) StartMonitor(cancel chan string,path_monitor string) {
+    var stop bool = false
+
+    //创建一个监控对象
+    watch, err := fsnotify.NewWatcher();
+    if err != nil {
+        log.Fatal(err);
+    }
+    defer watch.Close();
+    //
+    err = watch.Add(path_monitor);
+    if err != nil {
+        log.Fatal(err);
+    }
+
+    //处理监控对象的事件
+
+    for {
+        if stop {
+            break
+        }
+        select {
+            case ev := <-watch.Events:
+                {
+                    //判断事件发生的类型，如下5种,判断文件夹只看创建。
+                    // Create 创建
+  
+                    if ev.Op&fsnotify.Create == fsnotify.Create {
+                        fmt.Println("创建文件 : ", ev.Name);
+                        f, _ := os.Stat(ev.Name)
+                        if f.IsDir() {
+                            fmt.Println(ev.Name + " is dir.")
+                            dm := DispMsg{}
+                            dm.MonitorName = d.MonitorName
+                            dm.NextPath = ev.Name
+                            DispMsgCh <- dm
+                        } 
+                    }
+                }
+
+            case can := <- cancel:
+                if can == "cancel" {
+                    fmt.Println("break!")
+                    stop = true
+                    break
+                }
+            case err := <-watch.Errors:
+                {
+                    log.Println("error : ", err);
+                    return;
+                }
+        }
+    }
 }
