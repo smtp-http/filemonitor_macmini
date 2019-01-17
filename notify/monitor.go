@@ -30,9 +30,9 @@ func (f *FileMonitor)SetTcpserver(server *conn.TcpServer) {
     f.m_tcpserver = server
 }
  
-func (f *FileMonitor)Monitor() {
+func (f *FileMonitor)Monitor(cancel chan string,path_monitor string) {
 
-
+    var stop bool = false
 
     //创建一个监控对象
     watch, err := fsnotify.NewWatcher();
@@ -41,14 +41,17 @@ func (f *FileMonitor)Monitor() {
     }
     defer watch.Close();
     //
-    err = watch.Add(config.GetConfig().Path);
+    err = watch.Add(path_monitor);
     if err != nil {
         log.Fatal(err);
     }
     //我们另启一个goroutine来处理监控对象的事件
-    go func() {
-        for {
-            select {
+
+    for {
+        if stop {
+            break
+        }
+        select {
             case ev := <-watch.Events:
                 {
                     //判断事件发生的类型，如下5种
@@ -100,15 +103,20 @@ func (f *FileMonitor)Monitor() {
                         fmt.Println("修改权限 : ", ev.Name);
                     }
                 }
+
+            case can := <- cancel:
+                if can == "cancel" {
+                    fmt.Println("break!")
+                    stop = true
+                    break
+                }
             case err := <-watch.Errors:
                 {
                     log.Println("error : ", err);
                     return;
                 }
-            }
         }
-    }();
- 
-    //循环
-    select {};
+    }
+
+    fmt.Println("good bye!")
 }
