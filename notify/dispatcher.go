@@ -41,15 +41,12 @@ func (d *Dispatcher) Dispatch () {
 
 	                		go FindTargetFolder(dm.NextPath)
 	                	}
-
-
                 	} else if dm.Action == "stop_ok" {
                 		GetMiddleDirectoryMonitorInstance().IsRunning = true
 	                	GetMiddleDirectoryMonitorInstance().StartMonitor(md_cancel_sig,GetMiddleDirectoryMonitorInstance().MonitorPath)
 
 	                	go FindTargetFolder(GetMiddleDirectoryMonitorInstance().MonitorPath)
                 	}
-
                 } else if dm.MonitorName == "middle" {
                 	if dm.Action == "create_dir" {
                 		go FindTargetFolder(dm.NextPath)

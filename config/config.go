@@ -9,14 +9,15 @@ import (
 )
 
 type Configuration struct {
-    Ip string `json:"ip"`
-    Port string `json:"port"`
-    HttpEnable bool `json:"http_enable"`
-    Url    string `json:"url"`
-    Path string `json:"path"`
-    FileExtension string `json:"file_extension"`
-    DestinationFolder string `json:"destination_folder"`
-    RootDirectory string `json:"root_directory"`
+    Ip                  string  `json:"ip"`
+    Port                string  `json:"port"`
+    HttpEnable          bool    `json:"http_enable"`
+    Url                 string  `json:"url"`
+    Path                string  `json:"path"`
+    FileExtension       string  `json:"file_extension"`
+    DestinationFolder   string  `json:"destination_folder"`
+    RootDirectory       string  `json:"root_directory"`
+    TryTimes            int     `json:"try_times"`
 }
 
 type ConfigLoader struct {

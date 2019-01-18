@@ -7,5 +7,6 @@
     "path":"D:\\tmp",
     "file_extension":".csv",
     "destination_folder" : "AtlasLogs",
-    "root_directory" : "/root/data/Archive"
+    "root_directory" : "/root/data/Archive",
+    "try_times" : 10
 }

@@ -2,7 +2,7 @@ package notify
 import (
 	"testing"
 	//"time"
-	//"github.com/smtp-http/filemonitor_macmini/conn"
+	"github.com/smtp-http/filemonitor_macmini/config"
 )
 
 
@@ -40,7 +40,10 @@ func Test_Dispatcher(t *testing.T) {
 	//time.Sleep(10*time.Second)
 }*/
 
-func Test_FindTargetFolder(t *testing.T) {
+func Test_ProcessTargetFolder(t *testing.T) {
+	loader := config.GetLoader()
+	loader.Load("../config.json",config.GetConfig())
+
 	cur_dir := "D:\\tmp"
 	FindTargetFolder(cur_dir)
 }
