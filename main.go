@@ -19,5 +19,5 @@ func main() {
 
 	disp := new(notify.Dispatcher)
 
-	disp.Dispatch()
+	disp.Dispatch(config.GetConfig().RootDirectory)
 }

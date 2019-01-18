@@ -4,9 +4,8 @@
     "port":"6688",
     "http_enable":true,
     "url":"http://127.0.0.1:9001/",
-    "path":"D:\\tmp",
     "file_extension":".csv",
     "destination_folder" : "AtlasLogs",
-    "root_directory" : "/root/data/Archive",
+    "root_directory" : "D:\\tmp",
     "try_times" : 10
 }

@@ -16,14 +16,18 @@ type DispMsg struct {
 }
 
 var DispMsgCh chan DispMsg = make(chan DispMsg)
+var FileCancelSignal chan string = make(chan string)
 
-func (d *Dispatcher) Dispatch () {
+func (d *Dispatcher) Dispatch (root string) {
 	md_cancel_sig := make(chan string)
-	file_cancel_sig := make(chan string)
+	//FileCancelSignal := make(chan string)
+
+	// 获取当前最新路径做为监控路径：
+	FindTargetFolderWhenReset(root)
 
 	root_monitor := GetRootDirectoryMonitorInstance()
 
-	go root_monitor.StartMonitor(nil,"D:\\tmp")
+	go root_monitor.StartMonitor(nil,root)
 
 	for {
 		fmt.Println("disp begin!")
@@ -58,11 +62,11 @@ func (d *Dispatcher) Dispatch () {
                 			md_cancel_sig <- "cancel"
                 		} else {
                 			GetFileMonitorInstance().IsRunning = true
-                			GetFileMonitorInstance().StartMonitor(file_cancel_sig,dm.NextPath)
+                			GetFileMonitorInstance().StartMonitor(FileCancelSignal,dm.NextPath)
                 		}
                 	} else if dm.Action == "stop_ok" {
                 		GetFileMonitorInstance().IsRunning = true
-                		GetFileMonitorInstance().StartMonitor(file_cancel_sig,GetFileMonitorInstance().MonitorPath)
+                		GetFileMonitorInstance().StartMonitor(FileCancelSignal,GetFileMonitorInstance().MonitorPath)
                 	}
 
                 } else {

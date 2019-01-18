@@ -11,6 +11,49 @@ import (
 )
 
 
+func FindTargetFolderWhenReset(root string) {
+	var next_dir string = root //config.GetConfig().RootDirectory
+	fmt.Printf("next_dir:%v\n",next_dir)
+	var try_times int = 0
+	for {
+		err,target_path := findNewestSubFolder(next_dir)
+		if err != nil {
+			if err.Error() == "No files or folder!" {
+				fmt.Println(err.Error())
+				
+				try_times ++
+				if try_times > config.GetConfig().TryTimes {
+					fmt.Printf("Find target folder when reset timeout!")
+					return
+				}
+				time.Sleep(10 * time.Millisecond)
+				continue
+			}
+
+			fmt.Printf("find newest sub folder err when reset: %v \n",err)
+			return
+		}
+
+		
+		folder := filepath.Base(target_path)
+
+
+		//fmt.Printf("folder: %v    des folder: %v\n",folder,config.GetConfig().DestinationFolder)
+
+		if folder == config.GetConfig().DestinationFolder {
+			GetFileMonitorInstance().IsRunning = true
+            GetFileMonitorInstance().StartMonitor(FileCancelSignal,target_path)
+			fmt.Printf("target path: %v\n",target_path)
+			break
+
+		}
+
+		next_dir = filepath.Join(next_dir,folder)
+
+	}
+}
+
+
 func FindTargetFolder(cur_dir string) {
 	var nex_dir string = cur_dir
 	var try_times int = 0
@@ -46,7 +89,7 @@ func FindTargetFolder(cur_dir string) {
 		
 		folder := filepath.Base(target_path)
 
-		fmt.Printf("folder: %v    des folder: %v\n",folder,config.GetConfig().DestinationFolder)
+		//fmt.Printf("folder: %v    des folder: %v\n",folder,config.GetConfig().DestinationFolder)
 
 		if folder == config.GetConfig().DestinationFolder {
 			dm := DispMsg{}
@@ -54,7 +97,7 @@ func FindTargetFolder(cur_dir string) {
 			dm.Action = "create_file_monitor"
 			dm.NextPath = target_path
 			DispMsgCh <- dm
-			fmt.Printf("newest sub folder: %v\n",target_path)
+			fmt.Printf("target path: %v\n",target_path)
 			break
 
 		}
@@ -77,17 +120,18 @@ func findNewestSubFolder(cur_dir string) (error,string){
 	}
 
     for _, f := range files {
-        fmt.Println(f.Name())
+        
         if f.IsDir() {
         	err,creat_time := getFileModTime(filepath.Join(cur_dir,f.Name())) 
         	if err != nil {
         		fmt.Printf("get file: %v creatime err!\n",f.Name())
         		return err,""
         	}
+        	fmt.Println(f.Name())
         	fmt.Printf("unix time: %v\n",creat_time.Unix())
         	if creat_time.Unix() > creat_time_unix {
         		creat_time_unix = creat_time.Unix()
-        		fmt.Printf("time: %v \n",creat_time_unix)
+        		//fmt.Printf("time: %v \n",creat_time_unix)
         		dir_name = f.Name()
         	}
     	}
