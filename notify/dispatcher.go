@@ -31,7 +31,7 @@ func (d *Dispatcher) Dispatch () {
             case dm := <- DispMsgCh :
                 fmt.Printf("disp msg ch: %s  :  %s  \n",dm.MonitorName,dm.NextPath)
                 if dm.MonitorName == "root" {
-                	if dm.Action = "create_dir" {                                         // 停止对 middle dir 的监听
+                	if dm.Action == "create_dir" {                                         // 停止对 middle dir 的监听
 	                	if GetMiddleDirectoryMonitorInstance().IsRunning {
 	                		GetMiddleDirectoryMonitorInstance().MonitorPath = dm.NextPath
 	                		md_cancel_sig <- "cancel"
@@ -43,7 +43,7 @@ func (d *Dispatcher) Dispatch () {
 	                	}
 
 
-                	} else if dm.Action = "stop_ok" {
+                	} else if dm.Action == "stop_ok" {
                 		GetMiddleDirectoryMonitorInstance().IsRunning = true
 	                	GetMiddleDirectoryMonitorInstance().StartMonitor(md_cancel_sig,GetMiddleDirectoryMonitorInstance().MonitorPath)
 
@@ -51,11 +51,11 @@ func (d *Dispatcher) Dispatch () {
                 	}
 
                 } else if dm.MonitorName == "middle" {
-                	if dm.Action = "create_dir" {
+                	if dm.Action == "create_dir" {
                 		go FindTargetFolder(dm.NextPath)
                 	}
                 } else if dm.MonitorName == "file" {
-                	if dm.Action = "create_file_monitor" {   // 这条消息来自 FindTargetFolder（）
+                	if dm.Action == "create_file_monitor" {   // 这条消息来自 FindTargetFolder（）
                 		if GetFileMonitorInstance().IsRunning {
                 			GetFileMonitorInstance().MonitorPath = dm.NextPath
                 			md_cancel_sig <- "cancel"
@@ -63,7 +63,7 @@ func (d *Dispatcher) Dispatch () {
                 			GetFileMonitorInstance().IsRunning = true
                 			GetFileMonitorInstance().StartMonitor(file_cancel_sig,dm.NextPath)
                 		}
-                	} else if dm.Action = "stop_ok" {
+                	} else if dm.Action == "stop_ok" {
                 		GetFileMonitorInstance().IsRunning = true
                 		GetFileMonitorInstance().StartMonitor(file_cancel_sig,GetFileMonitorInstance().MonitorPath)
                 	}

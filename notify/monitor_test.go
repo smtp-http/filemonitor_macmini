@@ -30,7 +30,7 @@ func Test_DirectoryMonitor(t *testing.T) {
 
     cancel_sig <- "cancel"
 }
-*/
+
 
 func Test_Dispatcher(t *testing.T) {
 	disp := new(Dispatcher)
@@ -38,4 +38,9 @@ func Test_Dispatcher(t *testing.T) {
 	disp.Dispatch()
 
 	//time.Sleep(10*time.Second)
+}*/
+
+func Test_FindTargetFolder(t *testing.T) {
+	cur_dir := "D:\\tmp"
+	FindTargetFolder(cur_dir)
 }
