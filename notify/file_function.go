@@ -127,12 +127,11 @@ func findNewestSubFolder(cur_dir string) (error,string){
         		fmt.Printf("get file: %v creatime err!\n",f.Name())
         		return err,""
         	}
-        	fmt.Println(f.Name())
-        	fmt.Printf("unix time: %v\n",creat_time.Unix())
+        	
         	if creat_time.Unix() > creat_time_unix {
         		creat_time_unix = creat_time.Unix()
         		//fmt.Printf("time: %v \n",creat_time_unix)
-        		dir_name = f.Name()
+        		dir_name = filepath.Join(cur_dir,f.Name())
         	}
     	}
     }
