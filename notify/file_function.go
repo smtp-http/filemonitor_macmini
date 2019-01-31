@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"errors"
 	"github.com/smtp-http/filemonitor_macmini/config"
+	"strconv"
 )
 
 
@@ -34,11 +35,7 @@ func FindTargetFolderWhenReset(root string) {
 			return
 		}
 
-		
 		folder := filepath.Base(target_path)
-
-
-		//fmt.Printf("folder: %v    des folder: %v\n",folder,config.GetConfig().DestinationFolder)
 
 		if folder == config.GetConfig().DestinationFolder {
 			GetFileMonitorInstance().IsRunning = true
@@ -89,7 +86,6 @@ func FindTargetFolder(cur_dir string) {
 		
 		folder := filepath.Base(target_path)
 
-		//fmt.Printf("folder: %v    des folder: %v\n",folder,config.GetConfig().DestinationFolder)
 
 		if folder == config.GetConfig().DestinationFolder {
 			dm := DispMsg{}
@@ -130,7 +126,6 @@ func findNewestSubFolder(cur_dir string) (error,string){
         	
         	if creat_time.Unix() > creat_time_unix {
         		creat_time_unix = creat_time.Unix()
-        		//fmt.Printf("time: %v \n",creat_time_unix)
         		dir_name = filepath.Join(cur_dir,f.Name())
         	}
     	}
@@ -138,6 +133,7 @@ func findNewestSubFolder(cur_dir string) (error,string){
     
     return nil,dir_name
 }
+
 
 
 func getFileModTime(path string) (error,time.Time) { 
@@ -153,4 +149,91 @@ func getFileModTime(path string) (error,time.Time) {
 		return err,time.Now()
 	} 
 	return nil,fi.ModTime()
+}
+
+
+func Exists(path string) bool { 
+		_, err := os.Stat(path) //os.Stat获取文件信息 
+		if err != nil { 
+			if os.IsExist(err) { 
+				return true 
+			} 
+			return false 
+		} 
+		return true 
+}
+
+
+func GetLastProcessTime() (int64,error){
+	file_name := config.GetConfig().LastTimeStamp
+	if !Exists(file_name) {
+		f,err := os.Create(file_name)
+		defer f.Close()
+		if err !=nil {
+		    fmt.Println(err.Error())
+		    return 0,err
+		} 
+
+		time_stamp := time.Now().Unix()
+		time_str := strconv.FormatInt(time_stamp,10)
+		_,err = f.Write([]byte(time_str))
+		if err != nil {
+			fmt.Println(err)
+			return 0,err
+		}
+	}
+
+
+	f, err := os.OpenFile(file_name, os.O_RDONLY,0600)
+    defer f.Close()
+    if err !=nil {
+        fmt.Println(err.Error())
+        return 0,err
+    } else {
+		contentByte,err := ioutil.ReadAll(f)
+		if err != nil {
+			fmt.Println(err)
+			return 0,err
+		}
+
+		fmt.Println(string(contentByte))
+		time_rec, er := strconv.ParseInt(string(contentByte), 10, 64)
+		if er != nil {
+			fmt.Println(er)
+			return 0,er
+		}
+		return time_rec,nil
+    }
+}
+
+
+
+func UpdateLastProcessTime(time_stamp int64) error {
+
+	file_name := config.GetConfig().LastTimeStamp
+
+	if Exists(file_name) {
+		err := os.Remove(file_name)               //
+		if err != nil {
+			fmt.Println("--file remove Error!")
+			fmt.Printf("%s", err)
+			return err
+		}
+	}
+
+	f, err := os.OpenFile(file_name, os.O_WRONLY|os.O_CREATE, 0644)
+    if err != nil {
+        return err
+    }
+
+    defer f.Close()
+    
+    time_str := strconv.FormatInt(time_stamp,10)
+	_,err = f.Write([]byte(time_str))
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+    
+	return nil
 }
