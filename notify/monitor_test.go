@@ -1,8 +1,9 @@
 package notify
 import (
 	"testing"
-	//"time"
-	"github.com/smtp-http/filemonitor_macmini/config"
+	"time"
+	//"github.com/smtp-http/filemonitor_macmini/config"
+	"fmt"
 )
 
 
@@ -38,7 +39,7 @@ func Test_Dispatcher(t *testing.T) {
 	disp.Dispatch()
 
 	//time.Sleep(10*time.Second)
-}*/
+}
 
 func Test_ProcessTargetFolder(t *testing.T) {
 	loader := config.GetLoader()
@@ -46,4 +47,21 @@ func Test_ProcessTargetFolder(t *testing.T) {
 
 	cur_dir := "D:\\tmp"
 	FindTargetFolder(cur_dir)
+}
+*/
+
+func Test_timestampFile(t *testing.T) {
+	tm,err := GetLastProcessTime()
+	if err != nil {
+		fmt.Println("err:",err)
+	}
+
+	fmt.Printf("===== last time: %v\n",tm)
+
+	time_stamp := time.Now().Unix()
+	fmt.Printf("+++++ update time: %v \n",time_stamp)
+	err = UpdateLastProcessTime(time_stamp)
+	if err != nil {
+		fmt.Println("------ update err :",err)
+	}
 }

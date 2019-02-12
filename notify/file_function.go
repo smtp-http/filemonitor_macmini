@@ -9,6 +9,7 @@ import (
 	"errors"
 	"github.com/smtp-http/filemonitor_macmini/config"
 	"strconv"
+	"strings"
 )
 
 
