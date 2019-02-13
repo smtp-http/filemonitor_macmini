@@ -301,3 +301,85 @@ func GetAllFiles(dirPth string) (files []string, err error) {
 
 	return files, nil 
 } 
+
+
+func GetLastTestSummarySeek() (int64,error){
+	file_name := config.GetConfig().LastTestSummarySeek
+	
+	if !Exists(file_name) {
+		f,err := os.Create(file_name)
+		defer f.Close()
+		if err !=nil {
+		    fmt.Println(err.Error())
+		    return 0,err
+		} 
+		file := filepath.Join(config.GetConfig().RootDirectory,"TestSummary.csv")
+		fd,e := os.OpenFile(file, os.O_RDONLY,0600)
+		defer fd.Close()
+		if e != nil {
+			fmt.Printf("Open TestSummary.csv faild: %v\n",err)
+			return 0,err
+		}
+		n, _ := fd.Seek(0, os.SEEK_END)
+		fmt.Printf("===== n: %v\n",n)
+		seek_str := strconv.FormatInt(n,10)//strconv.Itoa(n)
+		_,err = f.Write([]byte(seek_str))
+		if err != nil {
+			fmt.Println(err)
+			return 0,err
+		}
+	}
+
+
+	f, err := os.OpenFile(file_name, os.O_RDONLY,0600)
+    defer f.Close()
+    if err !=nil {
+        fmt.Println(err.Error())
+        return 0,err
+    } else {
+		contentByte,err := ioutil.ReadAll(f)
+		if err != nil {
+			fmt.Println(err)
+			return 0,err
+		}
+
+		fmt.Printf("++ num: %v\n",string(contentByte))
+		seek, er := strconv.ParseInt(string(contentByte), 10, 64)//strconv.Atoi(string(contentByte)) //
+		if er != nil {
+			fmt.Println(er)
+			return 0,er
+		}
+		return seek,nil
+    }
+}
+
+
+func UpdateTestSummarySeek(seek int64) error {
+
+	file_name := config.GetConfig().LastTestSummarySeek
+
+	if Exists(file_name) {
+		err := os.Remove(file_name)               //
+		if err != nil {
+			fmt.Println("--file remove Error!")
+			fmt.Printf("%s", err)
+			return err
+		}
+	}
+
+	f, err := os.OpenFile(file_name, os.O_WRONLY|os.O_CREATE, 0644)
+    if err != nil {
+        return err
+    }
+
+    defer f.Close()
+    
+    seek_str := strconv.FormatInt(seek,10) //strconv.Itoa(seek)//
+	_,err = f.Write([]byte(seek_str))
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+    
+	return nil
+}

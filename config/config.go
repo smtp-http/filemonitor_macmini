@@ -17,6 +17,8 @@ type Configuration struct {
     DestinationFolder   string  `json:"destination_folder"`
     RootDirectory       string  `json:"root_directory"`
     TryTimes            int     `json:"try_times"`
+    LastTimeStamp       string  `json:"last_time_stamp"`
+    LastTestSummarySeek string  `json:"last_test_summary_seek"`
 }
 
 type ConfigLoader struct {
