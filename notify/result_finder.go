@@ -10,6 +10,8 @@ import (
 	"sync"
 	"path/filepath"
 	"github.com/smtp-http/filemonitor_macmini/config"
+	//"encoding/csv"
+	"strings"
 )
 
 
@@ -48,42 +50,47 @@ func(f *Finder)	Monitor() {
 	fd.Seek(offset,0)
 
 	for {
-		n, err := fd.Read(buf)
+		n, err := fd.Read(buf[1:])
 		if err != nil && err != io.EOF {
 			fmt.Printf("read file %s failed: %v\n", file, err)
 			return
 		}
 		if n > 1 {
-			//if n != len(buf) {
-			//	n--
-			//}
 			fd.Close()
-			time.Sleep(1 * time.Second)
+			time.Sleep(100 * time.Millisecond)//(1 * time.Second)
 			fmt.Printf("-- n: %v   len(buf):%v\n",n,len(buf))
-			fmt.Printf("%s", string(buf[:n]))
+			str := "\n"
+			bstr := []byte(str)
+			copy(buf[n+1:n+len(bstr)+1],bstr)
+		
+			//fmt.Printf("%s", string(buf[:n]))
 			offset += int64(n)
-			// TODO: cvs file process
-			UpdateTestSummarySeek(offset)
+
+			
+
+			records,e := ReadCSV(strings.NewReader(string(buf[:n + len(bstr)])))
+			if e != nil {
+				fmt.Printf("++ Read csv error %v \n",e)
+				UpdateTestSummarySeek(offset)
+				fd.Seek(offset, 0)
+				continue
+			}
+
+			for i,record := range records {
+				// TODO: get result
+				
+				fmt.Printf("--- r[%d] = %v\n",i,record)
+			}
+
 			fd, err = os.Open(file)
 			if err != nil {
 				fmt.Printf("open file %s failed: %v\n", file, err)
 				return
 			}
-			fd.Seek(offset, 0)
-		}// else 
 
-		//if n == len(buf) {
-			
-		//	fd.Close()
-		//	fd, err = os.Open(file)
-		//	if err != nil {
-		//		fmt.Printf("open file %s failed: %v\n", file, err)
-		//		return
-		//	}
-		//	fmt.Printf("++ offset: %v\n",offset)
-		//	fd.Seek(offset, 0)
-		//	UpdateTestSummarySeek(offset)
-		//}
+			UpdateTestSummarySeek(offset)
+			fd.Seek(offset, 0)
+		}
 	}
 
 }
