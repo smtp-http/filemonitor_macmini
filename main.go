@@ -17,7 +17,24 @@ func main() {
 	tcpserver := conn.GetServerInstance()
 	go tcpserver.ServerRun(config.GetConfig().Ip,config.GetConfig().Port)
 
-	disp := new(notify.Dispatcher)
+	tcpclient := new(conn.TcpClient)
+	tcpclient.Init(config.GetConfig().Host)
+	//tcpclient.SendTest()
 
-	disp.Dispatch(config.GetConfig().RootDirectory)
+	//================== disp ====================
+	//disp := new(notify.Dispatcher)
+
+	//disp.Dispatch(config.GetConfig().RootDirectory)
+
+	// ================= updater ==================
+	//updater := notify.GetUpdateScannerInstance()
+
+	//updater.ScanFile(config.GetConfig().RootDirectory)
+
+	//================ finder =============
+
+
+	finder := notify.GetFinderInstance()
+	finder.Monitor()
+
 }

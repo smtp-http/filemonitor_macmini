@@ -19,6 +19,7 @@ type Configuration struct {
     TryTimes            int     `json:"try_times"`
     LastTimeStamp       string  `json:"last_time_stamp"`
     LastTestSummarySeek string  `json:"last_test_summary_seek"`
+    Host                string  `json:"host"`
 }
 
 type ConfigLoader struct {
