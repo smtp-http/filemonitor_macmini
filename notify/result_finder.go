@@ -11,6 +11,7 @@ import (
 	"github.com/smtp-http/filemonitor_macmini/conn"
 	//"encoding/csv"
 	"strings"
+	"io/ioutil"
 )
 
 
@@ -64,7 +65,6 @@ func(f *Finder)	Monitor() {
 			bstr := []byte(str)
 			copy(buf[n+1:n+len(bstr)+1],bstr)
 		
-			//fmt.Printf("%s", string(buf[:n]))
 			offset += int64(n)
 
 			
@@ -119,6 +119,53 @@ func (f *Finder)processRecord(record string) {
 }
 
 func get_test_result(record []string) string {
-	
+	targetPath := filepath.Join(config.GetConfig().RootDirectory,"Archive")
+	targetPath = filepath.Join(targetPath,record[0])
+
+	if !Exists(targetPath) {
+		return "NO_RESULT"
+	}
+
+	err,subFolder := findNewestSubFolder(targetPath)
+	if err != nil {
+		fmt.Printf("find newest test folder error: %v\n",err)
+		return "NO_NEWEST_RESULT"
+	}
+
+	atlaslogs := filepath.Join(subFolder,"AtlasLogs")
+	records_csv := filepath.Join(atlaslogs,"Records.csv")
+
+	if !Exists(records_csv) {
+		return "NO_RECORDS_CSV_FILE"
+	} 
+
+	return read_csv_file(records_csv)
+}
+
+
+func read_csv_file(file string) {
+	cntb,err := ioutil.ReadFile(file)
+	if err != nil {
+		fmt.Printf("Read file err %v\n",err)
+		return
+	}
+
+	records,e := ReadCSV(strings.NewReader(string(cntb)))
+	if e != nil {
+		fmt.Printf("++ Read csv error %v \n",e)
+		return
+	}
+
+	for _,record := range records {
+		if processOneLine(record[0]) == "FAIL" {
+			return "FAIL"
+		}
+	}
+
 	return "PASS"
+}
+
+func processOneLine(record string) string{
+	strs := strings.Split(record,",")
+	return strs[4]
 }

@@ -1,9 +1,9 @@
 package notify
 import (
 	"testing"
-	"time"
+	//"time"
 	//"github.com/smtp-http/filemonitor_macmini/config"
-	"fmt"
+	//"fmt"
 )
 
 
@@ -48,7 +48,7 @@ func Test_ProcessTargetFolder(t *testing.T) {
 	cur_dir := "D:\\tmp"
 	FindTargetFolder(cur_dir)
 }
-*/
+
 
 func Test_timestampFile(t *testing.T) {
 	tm,err := GetLastProcessTime()
@@ -64,4 +64,9 @@ func Test_timestampFile(t *testing.T) {
 	if err != nil {
 		fmt.Println("------ update err :",err)
 	}
+}*/
+
+func Test_readcsv(t *testing.T) {
+	file := "D:\\tmp\\DLC84161GT7K3DV52\\20181110_8-59-47\\AtlasLogs\\Records.csv"
+	read_csv_file(file)
 }
