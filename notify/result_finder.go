@@ -143,17 +143,17 @@ func get_test_result(record []string) string {
 }
 
 
-func read_csv_file(file string) {
+func read_csv_file(file string) string{
 	cntb,err := ioutil.ReadFile(file)
 	if err != nil {
 		fmt.Printf("Read file err %v\n",err)
-		return
+		return "READ_FILE_FAIL"
 	}
 
 	records,e := ReadCSV(strings.NewReader(string(cntb)))
 	if e != nil {
 		fmt.Printf("++ Read csv error %v \n",e)
-		return
+		return "READ_CSV_FAIL"
 	}
 
 	for _,record := range records {
