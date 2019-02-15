@@ -9,5 +9,6 @@
     "try_times" : 10,
     "last_time_stamp" : "time_stamp.data",
     "last_test_summary_seek" : "test_summary_seek.data",
-    "host" : "127.0.0.1:8100"
+    "host" : "127.0.0.1:8100",
+    "serial_number" : "TR001"
 }

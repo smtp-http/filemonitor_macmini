@@ -20,6 +20,7 @@ type Configuration struct {
     LastTimeStamp       string  `json:"last_time_stamp"`
     LastTestSummarySeek string  `json:"last_test_summary_seek"`
     Host                string  `json:"host"`
+    SerialNumber        string `json:"serial_number"`
 }
 
 type ConfigLoader struct {
