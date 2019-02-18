@@ -17,6 +17,7 @@ import (
 
 type Finder struct {
 	client *conn.TcpClient
+	serial *conn.DevServial
 }
 
 
@@ -26,10 +27,24 @@ var finder_once sync.Once
 func GetFinderInstance() *Finder {
     finder_once.Do(func() {
         finder_instance = &Finder{}
-        finder_instance.client = new(conn.TcpClient)
-		finder_instance.client.Init(config.GetConfig().Host)
+        if config.GetConfig().DataUploadMode == "tcp" {
+        	finder_instance.client = new(conn.TcpClient)
+			finder_instance.client.Init(config.GetConfig().Host)
+		} else {
+			finder_instance.serial = new(conn.DevServial)
+			fmt.Printf("serial name: %s     baud: %d\n",config.GetConfig().SerailName,config.GetConfig().BaudRate)
+			finder_instance.serial.Open(config.GetConfig().SerailName,config.GetConfig().BaudRate)
+		}
     })
     return finder_instance
+}
+
+func (f *Finder) SendData(data []byte) {
+	if config.GetConfig().DataUploadMode == "tcp" {
+		f.client.Send(data)
+	} else {
+		f.serial.Send(data)
+	}
 }
 
 func(f *Finder)	Monitor() {
@@ -76,8 +91,9 @@ func(f *Finder)	Monitor() {
 				continue
 			}
 
+			fmt.Println("records: ",records)
+
 			for i,record := range records {
-				// TODO: get result
 
 				fmt.Printf("--- r[%d] = %v\n",i,record)
 				fmt.Println("record[0]: ",record[0])
@@ -106,13 +122,13 @@ func (f *Finder)processRecord(record string) {
 	sn := config.GetConfig().SerialNumber
 	if len(strs) == 2 {
 		ret := sn + "," + "2"
-		f.client.Send([]byte(ret))
+		f.SendData([]byte(ret))
 	} else if len(strs) == 3 {
 		ret := sn + "," + "3"
-		f.client.Send([]byte(ret))
+		f.SendData([]byte(ret))
 	} else if len(strs) > 10 {
 		ret := sn + "," + strs[0] + "," + get_test_result(strs)
-		f.client.Send([]byte(ret))
+		f.SendData([]byte(ret))
 	} else {
 		fmt.Printf("The unknown message!")
 	}

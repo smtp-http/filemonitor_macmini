@@ -10,5 +10,8 @@
     "last_time_stamp" : "time_stamp.data",
     "last_test_summary_seek" : "test_summary_seek.data",
     "host" : "127.0.0.1:8100",
-    "serial_number" : "TR001"
+    "serial_number" : "TR001",
+    "serail_name" : "/dev/tty.usbserial-AJ03LJ9K",
+    "baud_rate" : 115200,
+    "data_upload_mode" : "serail"
 }

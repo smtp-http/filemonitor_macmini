@@ -20,7 +20,10 @@ type Configuration struct {
     LastTimeStamp       string  `json:"last_time_stamp"`
     LastTestSummarySeek string  `json:"last_test_summary_seek"`
     Host                string  `json:"host"`
-    SerialNumber        string `json:"serial_number"`
+    SerialNumber        string  `json:"serial_number"`
+    SerailName          string  `json:"serail_name"`
+    BaudRate            int     `json:"baud_rate"`
+    DataUploadMode      string  `json:"data_upload_mode"`  // "serial" or "tcp"
 }
 
 type ConfigLoader struct {
