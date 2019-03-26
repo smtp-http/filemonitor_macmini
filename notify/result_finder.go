@@ -67,7 +67,7 @@ func(f *Finder)	Monitor() {
 	fd.Seek(offset,0)
 
 	for {
-		n, err := fd.Read(buf[1:])
+		n, err := fd.Read(buf[3:])
 		if err != nil && err != io.EOF {
 			fmt.Printf("read file %s failed: %v\n", file, err)
 			return
@@ -75,15 +75,17 @@ func(f *Finder)	Monitor() {
 		if n > 1 {
 			fd.Close()
 			time.Sleep(100 * time.Millisecond)//(1 * time.Second)
+			buf[0] = 0
+			buf[1] = 13
+			buf[2] = 10
 			fmt.Printf("-- n: %v   len(buf):%v\n",n,len(buf))
-			str := "\n\t"
-			bstr := []byte(str)
-			copy(buf[n+1:n+len(bstr)+1],bstr)
-		
+
 			offset += int64(n)
 
-			
-			records,e := ReadCSV(strings.NewReader(string(buf[:n + len(bstr)])))
+			fmt.Printf("== buf: %v\n",buf[:n+3])
+			fmt.Printf("== string: %v\n",string(buf[:n + 3]))
+
+			records,e := ReadCSV(strings.NewReader(string(buf[:n + 3])))
 			if e != nil {
 				fmt.Printf("++ Read csv error %v \n",e)
 				UpdateTestSummarySeek(offset)
@@ -129,6 +131,7 @@ func (f *Finder)processRecord(record string) {
 	} else if len(strs) > 10 {
 		var ret string
 		res := get_test_result(strs)
+		fmt.Println("### res:" + res)
 		if "PASS" == res {
 			ret = "ASN:" + strs[0] + "," + "PASS"
 		} else {
@@ -143,7 +146,7 @@ func (f *Finder)processRecord(record string) {
 func get_test_result(record []string) string {
 	targetPath := filepath.Join(config.GetConfig().RootDirectory,"Archive")
 	targetPath = filepath.Join(targetPath,record[0])
-
+	fmt.Println("+++ target path:",targetPath)
 	if !Exists(targetPath) {
 		return "NO_RESULT"
 	}
