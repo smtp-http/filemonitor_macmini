@@ -50,7 +50,7 @@ func (f *Finder) SendData(data []byte) {
 func(f *Finder)	Monitor() {
 	file := filepath.Join(config.GetConfig().RootDirectory,"TestSummary.csv")
 	
-	buf := make([]byte, 2048)
+	buf := make([]byte, 65536)
 	offset,e := GetLastTestSummarySeek()
 	if e != nil {
 		fmt.Printf("Get last test summary seek failed: %v\n",e)
@@ -76,7 +76,7 @@ func(f *Finder)	Monitor() {
 			fd.Close()
 			time.Sleep(100 * time.Millisecond)//(1 * time.Second)
 			fmt.Printf("-- n: %v   len(buf):%v\n",n,len(buf))
-			str := "\n"
+			str := "\n\t"
 			bstr := []byte(str)
 			copy(buf[n+1:n+len(bstr)+1],bstr)
 		
@@ -121,13 +121,19 @@ func (f *Finder)processRecord(record string) {
 
 	sn := config.GetConfig().SerialNumber
 	if len(strs) == 2 {
-		ret := sn + "," + "2"
+		ret := "ASN:" + sn + "," + "2," + "FAIL"
 		f.SendData([]byte(ret))
 	} else if len(strs) == 3 {
-		ret := sn + "," + "3"
+		ret := "ASN:" + sn + "," + "3," + "FAIL"
 		f.SendData([]byte(ret))
 	} else if len(strs) > 10 {
-		ret := sn + "," + strs[0] + "," + get_test_result(strs)
+		var ret string
+		res := get_test_result(strs)
+		if "PASS" == res {
+			ret = "ASN:" + strs[0] + "," + "PASS"
+		} else {
+			ret = "ASN:" + strs[0] + "," + res + "FAIL"
+		}
 		f.SendData([]byte(ret))
 	} else {
 		fmt.Printf("The unknown message!")
