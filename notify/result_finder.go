@@ -82,9 +82,6 @@ func(f *Finder)	Monitor() {
 
 			offset += int64(n)
 
-			fmt.Printf("== buf: %v\n",buf[:n+3])
-			fmt.Printf("== string: %v\n",string(buf[:n + 3]))
-
 			records,e := ReadCSV(strings.NewReader(string(buf[:n + 3])))
 			if e != nil {
 				fmt.Printf("++ Read csv error %v \n",e)
