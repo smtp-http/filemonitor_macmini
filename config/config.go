@@ -8,6 +8,9 @@ import (
     "sync"
 )
 
+///////////////////////////////////  configuration ////////////////////////////////////
+
+/*config*/
 type Configuration struct {
     Ip                  string  `json:"ip"`
     Port                string  `json:"port"`
@@ -26,9 +29,6 @@ type Configuration struct {
     DataUploadMode      string  `json:"data_upload_mode"`  // "serial" or "tcp"
 }
 
-type ConfigLoader struct {
-
-}
 
 var config *Configuration
 var once_cfg sync.Once
@@ -39,6 +39,35 @@ func GetConfig() *Configuration {
     })
     return config
 }
+
+
+/*log config*/
+
+type LogConfiguration struct{
+    HttpPort            string  `json:"httpPort"`
+    LogFile             string  `json:"logFile"`
+}
+
+
+var log_config *LogConfiguration
+var once_log_cfg sync.Once
+ 
+func GetLogConfig() *LogConfiguration {
+    once_log_cfg.Do(func() {
+        log_config = &LogConfiguration{}
+    })
+    return log_config
+}
+
+
+
+
+//////////////////////////////////////  config loader ///////////////////////////////////
+
+type ConfigLoader struct {
+
+}
+
 
 var loader *ConfigLoader
 var once_loader sync.Once
