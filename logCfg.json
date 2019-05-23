@@ -1,4 +1,4 @@
 {
 	"httpPort": "3001",
-    "logFile" : "f:/log/ex.log"
+    "logPath" : "f:/log"
 }

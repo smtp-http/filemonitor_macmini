@@ -45,7 +45,7 @@ func GetConfig() *Configuration {
 
 type LogConfiguration struct{
     HttpPort            string  `json:"httpPort"`
-    LogFile             string  `json:"logFile"`
+    LogPath             string  `json:"logPath"`
 }
 
 
