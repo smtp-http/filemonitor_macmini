@@ -35,22 +35,30 @@ func GetLogFileInstance() *LogFile {
 }
 
 
-/*
-func (l *LogFile) GetFileList() ([]string,error) {
-	var files []string
 
-	return files,nil
+/////////////////////////////////////////////////////// file list ////////////////////////////////////////////////////////
+
+
+type ResGetLogList struct {
+    Files []string  `json:"fileList"`
 }
 
+func (l *LogFile)GetLogList(w http.ResponseWriter, r *http.Request) {
+        
+    var res ResGetLogList
+    var err error
 
 
-func (l *LogFile) GetFileContent(fileName string,pos int,line int) (string,error) {
-	var content string
+    res.Files,err = GetSpecificExtensionFiles(l.Path,config.GetLogConfig().Extension)
+    if err != nil {
+        res.Files = nil;
+    }
 
+    ret, _ := json.Marshal(res)
+    fmt.Fprint(w, string(ret))
 
-	return content,nil
 }
-*/
+
 
 ////////////////////////////////////////////////////// file content //////////////////////////////////////////////////////
 type ReqGetContent struct {
@@ -95,23 +103,4 @@ func (l *LogFile)GetLogContent(w http.ResponseWriter, r *http.Request) {
     }
 }
 
-/////////////////////////////////////////////////////// file list ////////////////////////////////////////////////////////
 
-
-type ResGetLogList struct {
-    Files []string  `json:"fileList"`
-}
-
-func (l *LogFile)GetLogList(w http.ResponseWriter, r *http.Request) {
-        
-    var res ResGetLogList
-    //var err error
-    // TODO: get file list
-    //logFile := notify.GetLogFileInstance()
-
-    //res.Files,error = logFile.GetFileList()
-
-    ret, _ := json.Marshal(res)
-    fmt.Fprint(w, string(ret))
-
-}

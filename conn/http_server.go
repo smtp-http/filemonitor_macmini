@@ -1,12 +1,9 @@
 package conn
 
 import (
-	"fmt"
+	//"fmt"
 	"net/http"
 	"sync"
-	//"encoding/json"
-	//"io/ioutil"
-	//"github.com/smtp-http/filemonitor_macmini/notify"
 )
 
 
@@ -32,8 +29,8 @@ func GetHttpServerInstance() *HttpServer {
 func (s *HttpServer) StartServer(port string) {
 
 	p := ":" + port
-	fmt.Println("======== port: ",p)
-	http.ListenAndServe(":3001", nil)
+
+	http.ListenAndServe(p, nil)
 }
 
 func (s *HttpServer)AddHandleFunc(subUrl string,f func( http.ResponseWriter,  *http.Request)) {

@@ -1,4 +1,5 @@
 {
 	"httpPort": "3001",
-    "logPath" : "f:/log"
+    "logPath" : "f:/Log",
+    "extension" : ".txt"
 }
