@@ -2,13 +2,13 @@ package main
 
 import (
 	"github.com/smtp-http/filemonitor_macmini/notify"
-	"github.com/smtp-http/filemonitor_macmini/conn"
+	//"github.com/smtp-http/filemonitor_macmini/conn"
 	"github.com/smtp-http/filemonitor_macmini/config"
 )
 
 
 func main() {
-
+/*
 	loader := config.GetLoader()
 	loader.Load("./config.json",config.GetConfig())
 
@@ -35,5 +35,13 @@ func main() {
 
 	finder := notify.GetFinderInstance()
 	finder.Monitor()
+*/
+	loader := config.GetLoader()
+	loader.Load("./logCfg.json",config.GetLogConfig())
 
+	//server := GetHttpServerInstance()
+
+	//server.StartServer(config.GetLogConfig().HttpPort)
+	logFile := notify.GetLogFileInstance()
+	logFile.Server.StartServer(config.GetLogConfig().HttpPort)
 }
