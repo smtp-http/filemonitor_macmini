@@ -3,6 +3,8 @@ File monitor running on macmini
 
 ## Usage
 
+####  更多usage参看 [其他例子](https://github.com/smtp-http/filemonitor_macmini/wiki)
+
 ```
 go get -u github.com/smtp-http/filemonitor_macmini
 ```
