@@ -87,6 +87,7 @@ func (l *LogFile)GetLogList(w http.ResponseWriter, r *http.Request) {
     }
 
     ret, _ := json.Marshal(res)
+    w.Header().Set("Access-Control-Allow-Origin", "*")
     fmt.Fprint(w, string(ret))
 
 }
@@ -100,9 +101,10 @@ type ReqGetContent struct {
 }
 
 type ResGetContent struct {
-    FileName string     `json:"fileName"`
-    LineAmount  int     `json:"lineAmount"` 
-    Content     []string  `json:"Content"`
+    Status      string      `json:"status"`
+    FileName    string     `json:"fileName"`
+    LineAmount  int        `json:"lineAmount"` 
+    Content     []string   `json:"Content"`
 }
 
 func (l *LogFile)GetLogContent(w http.ResponseWriter, r *http.Request) {
@@ -112,24 +114,29 @@ func (l *LogFile)GetLogContent(w http.ResponseWriter, r *http.Request) {
     fmt.Println(body_str)
 
     var req ReqGetContent
-   // var e error
-
-    //logFile := notify.GetLogFileInstance()
+    var res ResGetContent
 
     if err := json.Unmarshal(body, &req); err == nil {
         fmt.Println(req)
-        
-        var res ResGetContent
 
         res.Content,res.LineAmount = GetLog(req.FileName,req.Start,req.LineNum)
-        
+        if res.Content == nil {
+            res.Status = "fail"
+        } else {
+            res.Status = "sucess"
+        }
         res.FileName = req.FileName
         res.LineAmount = req.LineNum
 
         ret, _ := json.Marshal(res)
         fmt.Fprint(w, string(ret))
     } else {
+        res.Status = "fail"
+
         fmt.Println(err)
+        ret, _ := json.Marshal(res)
+        w.Header().Set("Access-Control-Allow-Origin", "*")
+        fmt.Fprint(w, string(ret))
     }
 }
 
