@@ -9,6 +9,9 @@ import (
     "sync"
     "net/http"
     "encoding/json"
+    "os"
+    "io"
+    "bufio"
 )
 
 
@@ -34,6 +37,35 @@ func GetLogFileInstance() *LogFile {
     return log_instance
 }
 
+
+func GetLog(file string,start int,lineNum int) ([]string,int){ //
+    f, _ := os.Open(file) //日志文件路径
+    defer f.Close()
+    var resultSlice []string
+    buf := bufio.NewReader(f)                                      //读取日志文件里的字符流
+    for {                                                          //逐行读取日志文件
+        line, err := buf.ReadString('\n')
+        resultSlice = append(resultSlice, line)
+        if err != nil {
+            if err == io.EOF {
+                break //表示文件读取完了
+            }
+        }
+    }
+
+    length := len(resultSlice)
+    fmt.Println(length) //打印出结果的总条数
+    // bubbleSort(resultSlice)       //对结果排序
+    if start > length - 1{
+        return nil,0
+    }
+
+    if lineNum > length - start {
+        return resultSlice[0:length - start -1],length - start
+    } else {
+        return resultSlice[length - start - lineNum - 1:length - start - 1],lineNum
+    }
+}
 
 
 /////////////////////////////////////////////////////// file list ////////////////////////////////////////////////////////
@@ -70,7 +102,7 @@ type ReqGetContent struct {
 type ResGetContent struct {
     FileName string     `json:"fileName"`
     LineAmount  int     `json:"lineAmount"` 
-    Content     string  `json:"Content"`
+    Content     []string  `json:"Content"`
 }
 
 func (l *LogFile)GetLogContent(w http.ResponseWriter, r *http.Request) {
@@ -88,10 +120,8 @@ func (l *LogFile)GetLogContent(w http.ResponseWriter, r *http.Request) {
         fmt.Println(req)
         
         var res ResGetContent
-        //res.Content,e = logFile.GetFileContent(req.FileName,req.Start,req.LineNum)
-        //if(e != nil){
-        //    res.Content = ""
-        //}
+
+        res.Content,res.LineAmount = GetLog(req.FileName,req.Start,req.LineNum)
         
         res.FileName = req.FileName
         res.LineAmount = req.LineNum
