@@ -129,6 +129,7 @@ func (l *LogFile)GetLogContent(w http.ResponseWriter, r *http.Request) {
         res.LineAmount = req.LineNum
 
         ret, _ := json.Marshal(res)
+        w.Header().Set("Access-Control-Allow-Origin", "*")
         fmt.Fprint(w, string(ret))
     } else {
         res.Status = "fail"
